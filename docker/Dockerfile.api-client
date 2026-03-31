@@ -1,0 +1,41 @@
+# 1. Prune 단계
+FROM node:20-alpine AS pruner
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+RUN corepack enable pnpm && pnpm add -g turbo
+COPY . .
+RUN turbo prune --scope=api-client --docker
+
+# 2. 빌드 단계
+FROM node:20-alpine AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+RUN corepack enable pnpm
+
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY --from=pruner /app/out/full/ .
+COPY turbo.json turbo.json
+RUN pnpm turbo run build --filter=api-client
+
+# 3. 실행 단계
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/apps/api-client/public ./apps/api-client/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/api-client/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/api-client/.next/static ./apps/api-client/.next/static
+
+USER nextjs
+EXPOSE 3000
+ENV PORT 3000
+
+CMD ["node", "apps/api-client/server.js"]
