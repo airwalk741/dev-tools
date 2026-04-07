@@ -49,7 +49,7 @@ export default function RequestEditor({ activeRequest }: RequestEditorProps) {
     "h-[38px] border border-gray-200 rounded px-3 text-sm font-bold bg-white focus:border-blue-500 outline-none transition-all";
 
   return (
-    <section className="w-1/2 border-r border-gray-200 flex flex-col min-w-0 bg-white">
+    <section className="w-full h-full flex flex-col min-w-0 bg-white">
       <div className="flex border-b border-gray-200 bg-gray-50/5 h-12">
         {tabs.map((tab) => (
           <button
@@ -207,7 +207,7 @@ export default function RequestEditor({ activeRequest }: RequestEditorProps) {
                             }}
                           />
                           <button
-                            type="button" // 폼 전송 방지
+                            type="button"
                             onClick={() =>
                               fileInputRefs.current[
                                 `${activeRequest.id}-${i}`

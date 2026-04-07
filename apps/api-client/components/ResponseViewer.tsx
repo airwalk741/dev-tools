@@ -38,7 +38,7 @@ export default function ResponseViewer({
   };
 
   return (
-    <section className="w-1/2 flex flex-col bg-white min-w-0 border-l border-gray-200">
+    <section className="w-full h-full flex flex-col bg-white min-w-0">
       <div className="h-12 flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200 text-[10px] font-black uppercase tracking-widest text-gray-400 shrink-0">
         <div className="flex items-center gap-4">
           <span>Response</span>
@@ -62,8 +62,8 @@ export default function ResponseViewer({
         )}
       </div>
 
-      <div className="flex-1 p-4 bg-gray-900 overflow-y-auto custom-scrollbar">
-        <pre className="font-mono text-sm text-green-400 w-full whitespace-pre-wrap break-words">
+      <div className="flex-1 p-4 bg-gray-900 overflow-y-auto custom-scrollbar min-w-0">
+        <pre className="font-mono text-sm text-green-400 w-full whitespace-pre-wrap break-all">
           <code>{data || "Send a request to see the response here."}</code>
         </pre>
       </div>
